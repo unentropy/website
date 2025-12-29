@@ -1,6 +1,6 @@
 ---
 title: Hello, World
-date: 2024-12-27
+date: 2025-12-27
 authors: mat
 excerpt: I'm convinced that AI-assisted coding is a revolution. I'm also convinced we're not talking enough about the hard parts.
 tags:

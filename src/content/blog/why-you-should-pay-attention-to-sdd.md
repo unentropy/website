@@ -1,6 +1,6 @@
 ---
 title: Why You Should Pay Attention to Spec-Driven Development
-date: 2024-12-28
+date: 2025-12-28
 authors: mat
 excerpt: Vibe-coding gets all the headlines, but there's another AI-powered pattern emerging that I think will matter more in the long run — Spec-Driven Development.
 cover:
