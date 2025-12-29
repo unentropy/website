@@ -1,0 +1,19 @@
+---
+interface Props {
+  tags: string[];
+}
+
+const { tags } = Astro.props;
+
+function slugify(tag: string): string {
+  return tag.toLowerCase().replace(/\s+/g, '-');
+}
+---
+
+<div class="tag-list">
+  {tags.map((tag) => (
+    <a href={`/blog/tags/${slugify(tag)}/`} class="tag">
+      {tag}
+    </a>
+  ))}
+</div>

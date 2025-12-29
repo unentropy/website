@@ -1,0 +1,80 @@
+---
+import { resolveAuthors, type Author } from '../../data/authors';
+import TagList from './TagList.astro';
+
+interface Props {
+  date: Date;
+  authors?: string | Author | (string | Author)[];
+  tags?: string[];
+  readingTime?: number;
+  lastUpdated?: Date;
+  showTags?: boolean;
+}
+
+const { date, authors, tags, readingTime, lastUpdated, showTags = true } = Astro.props;
+
+const resolvedAuthors = resolveAuthors(authors);
+
+function formatDate(d: Date): string {
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+---
+
+<div class="post-meta">
+  <span class="post-meta-item">
+    <time datetime={date.toISOString()}>{formatDate(date)}</time>
+  </span>
+
+  {lastUpdated && lastUpdated.getTime() !== date.getTime() && (
+    <>
+      <span class="post-meta-separator">·</span>
+      <span class="post-meta-item">
+        Updated <time datetime={lastUpdated.toISOString()}>{formatDate(lastUpdated)}</time>
+      </span>
+    </>
+  )}
+
+  {resolvedAuthors.length > 0 && (
+    <>
+      <span class="post-meta-separator">·</span>
+      {resolvedAuthors.map((author, i) => (
+        <span class="post-author">
+          {author.picture && (
+            <img src={author.picture} alt={author.name} class="post-author-picture" />
+          )}
+          {author.url ? (
+            <a href={author.url} class="post-author-name" target="_blank" rel="noopener">
+              {author.name}
+            </a>
+          ) : (
+            <span class="post-author-name">{author.name}</span>
+          )}
+          {i < resolvedAuthors.length - 1 && <span>, </span>}
+        </span>
+      ))}
+    </>
+  )}
+
+  {readingTime && (
+    <>
+      <span class="post-meta-separator">·</span>
+      <span class="post-meta-item">{readingTime} min read</span>
+    </>
+  )}
+</div>
+
+{showTags && tags && tags.length > 0 && (
+  <div class="post-meta-tags">
+    <TagList tags={tags} />
+  </div>
+)}
+
+<style>
+  .post-meta-tags {
+    margin-top: 0.75rem;
+  }
+</style>

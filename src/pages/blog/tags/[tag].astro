@@ -1,0 +1,98 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BlogLayout from '../../../layouts/BlogLayout.astro';
+import PostCard from '../../../components/blog/PostCard.astro';
+
+function generateExcerpt(content: string, maxLength = 150): string {
+  const plainText = content
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`]+`/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[#*_~]/g, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+  
+  if (plainText.length <= maxLength) return plainText;
+  return plainText.slice(0, maxLength).replace(/\s+\S*$/, '') + '...';
+}
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('blog', ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+  });
+
+  // Collect all unique tags
+  const allTags = new Set<string>();
+  posts.forEach(post => {
+    post.data.tags?.forEach(tag => allTags.add(tag));
+  });
+
+  // Create a page for each tag
+  return Array.from(allTags).map(tag => ({
+    params: { tag: tag.toLowerCase().replace(/\s+/g, '-') },
+    props: {
+      tag,
+      posts: posts
+        .filter(post => post.data.tags?.includes(tag))
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  tag: string;
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { tag, posts } = Astro.props;
+
+const postsWithExcerpts = posts.map(post => ({
+  post,
+  excerpt: post.data.excerpt || generateExcerpt(post.body || '', 150),
+}));
+---
+
+<BlogLayout title={`Posts tagged "${tag}"`} description={`All blog posts tagged with ${tag}`}>
+  <h1 class="blog-page-title">Posts tagged "{tag}"</h1>
+  
+  <p class="tag-count">{posts.length} post{posts.length !== 1 ? 's' : ''}</p>
+
+  {posts.length === 0 ? (
+    <div class="blog-empty">
+      <p>No posts found with this tag.</p>
+    </div>
+  ) : (
+    <div class="post-list">
+      {postsWithExcerpts.map(({ post, excerpt }) => (
+        <PostCard post={post} excerpt={excerpt} />
+      ))}
+    </div>
+  )}
+
+  <div class="back-link">
+    <a href="/blog/">← Back to all posts</a>
+  </div>
+</BlogLayout>
+
+<style>
+  .tag-count {
+    color: var(--sl-color-gray-3);
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--sl-color-gray-5);
+  }
+
+  .back-link a {
+    color: var(--sl-color-text-accent);
+    text-decoration: none;
+  }
+
+  .back-link a:hover {
+    text-decoration: underline;
+  }
+</style>

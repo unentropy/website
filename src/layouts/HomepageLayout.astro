@@ -21,6 +21,7 @@ import ThemeProvider from 'virtual:starlight/components/ThemeProvider';
 import ThemeSelect from 'starlight-theme-nova/components/ThemeSelect.astro';
 import SocialIcons from 'starlight-theme-nova/components/SocialIcons.astro';
 import logo from '../assets/logo.svg';
+import logoIcon from '../assets/logo-icon.svg';
 
 const currentYear = new Date().getFullYear();
 
@@ -81,9 +82,11 @@ if (pagefindEnabled) mainDataAttributes['data-pagefind-body'] = '';
 		<header class="home-header">
 			<div class="home-header-inner">
 				<a href="/" class="site-title">
-					<img src={logo.src} alt="Unentropy" />
+					<img src={logo.src} alt="Unentropy" class="logo-full" />
+					<img src={logoIcon.src} alt="Unentropy" class="logo-icon" />
 				</a>
 				<nav class="home-nav">
+					<a href="/blog/" class="nav-link">Blog</a>
 					<a href="/getting-started/" class="nav-link">Documentation</a>
 					<SocialIcons />
 					<ThemeSelect />
@@ -137,6 +140,14 @@ if (pagefindEnabled) mainDataAttributes['data-pagefind-body'] = '';
 		width: auto;
 	}
 
+	.logo-full {
+		display: block;
+	}
+
+	.logo-icon {
+		display: none;
+	}
+
 	:global([data-theme="light"]) .site-title img {
 		filter: brightness(0);
 	}
@@ -155,10 +166,30 @@ if (pagefindEnabled) mainDataAttributes['data-pagefind-body'] = '';
 		color: var(--sl-color-text);
 		text-decoration: none;
 		font-weight: 500;
+		white-space: nowrap;
 	}
 
 	.nav-link:hover {
 		color: var(--sl-color-text-accent);
+	}
+
+	/* Mobile: show icon logo, reduce spacing */
+	@media (max-width: 600px) {
+		.logo-full {
+			display: none;
+		}
+
+		.logo-icon {
+			display: block;
+		}
+
+		.home-nav {
+			gap: 0.75rem;
+		}
+
+		.nav-link {
+			font-size: 0.875rem;
+		}
 	}
 
 	.site-footer {

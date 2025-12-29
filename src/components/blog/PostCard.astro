@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostMeta from './PostMeta.astro';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  excerpt?: string;
+}
+
+const { post, excerpt } = Astro.props;
+const { data } = post;
+
+// Get cover image for thumbnail
+function getCoverSrc(cover: typeof data.cover): string | undefined {
+  if (!cover) return undefined;
+  if ('image' in cover) {
+    return typeof cover.image === 'string' ? cover.image : cover.image.src;
+  }
+  // For dark/light, use dark as default thumbnail
+  return typeof cover.dark === 'string' ? cover.dark : cover.dark.src;
+}
+
+const thumbnailSrc = getCoverSrc(data.cover);
+---
+
+<article class="post-card">
+  {thumbnailSrc && (
+    <div class="post-card-thumbnail">
+      <a href={`/blog/${post.id}/`}>
+        <img src={thumbnailSrc} alt={data.cover?.alt || ''} />
+      </a>
+    </div>
+  )}
+  <div class="post-card-content">
+    <h3 class="post-card-title">
+      <a href={`/blog/${post.id}/`}>{data.title}</a>
+    </h3>
+    {excerpt && <p class="post-card-excerpt">{excerpt}</p>}
+    <div class="post-card-meta">
+      <PostMeta 
+        date={data.date} 
+        authors={data.authors} 
+        tags={data.tags}
+        showTags={false}
+      />
+    </div>
+  </div>
+</article>

@@ -1,0 +1,78 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import PostMeta from '../../components/blog/PostMeta.astro';
+import CoverImage from '../../components/blog/CoverImage.astro';
+import PrevNext from '../../components/blog/PrevNext.astro';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('blog', ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+  });
+
+  // Sort by date descending
+  const sortedPosts = posts.sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  );
+
+  return sortedPosts.map((post, index) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      prevPost: sortedPosts[index + 1] || null, // Older post
+      nextPost: sortedPosts[index - 1] || null, // Newer post
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { post, prevPost, nextPost } = Astro.props as Props;
+
+const typedPost = post as CollectionEntry<'blog'>;
+const typedPrevPost = prevPost as CollectionEntry<'blog'> | null;
+const typedNextPost = nextPost as CollectionEntry<'blog'> | null;
+
+const { Content } = await render(typedPost);
+
+// Calculate reading time
+function calculateReadingTime(content: string): number {
+  const words = content.trim().split(/\s+/).length;
+  return Math.ceil(words / 200);
+}
+
+const readingTime = typedPost.data.metrics?.readingTime 
+  ? Math.ceil(typedPost.data.metrics.readingTime / 60)
+  : calculateReadingTime(typedPost.body || '');
+---
+
+<BlogLayout title={typedPost.data.title} description={typedPost.data.excerpt}>
+  <article class="blog-article">
+    {typedPost.data.cover && (
+      <CoverImage cover={typedPost.data.cover} />
+    )}
+
+    <h1>{typedPost.data.title}</h1>
+
+    <PostMeta
+      date={typedPost.data.date}
+      authors={typedPost.data.authors}
+      tags={typedPost.data.tags}
+      readingTime={readingTime}
+      lastUpdated={typedPost.data.lastUpdated}
+    />
+
+    <div class="blog-article-content">
+      <Content />
+    </div>
+
+    <PrevNext prev={typedPrevPost} next={typedNextPost} />
+  </article>
+</BlogLayout>
+
+<style>
+  .blog-article-content {
+    margin-top: 1.5rem;
+  }
+</style>

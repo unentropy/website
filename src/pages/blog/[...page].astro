@@ -1,0 +1,138 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import PostCard from '../../components/blog/PostCard.astro';
+import PostMeta from '../../components/blog/PostMeta.astro';
+import CoverImage from '../../components/blog/CoverImage.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getCollection('blog', ({ data }) => {
+    // Filter out drafts in production
+    return import.meta.env.PROD ? data.draft !== true : true;
+  });
+
+  // Sort by date descending (newest first)
+  const sortedPosts = posts.sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  );
+
+  return paginate(sortedPosts, { pageSize: 10 });
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { page } = Astro.props as Props;
+const posts = page.data as CollectionEntry<'blog'>[];
+
+// Get first post and render its content for the featured section
+const firstPost = posts[0];
+const otherPosts = posts.slice(1);
+
+// Calculate reading time from word count (~200 words/min)
+function calculateReadingTime(content: string): number {
+  const words = content.trim().split(/\s+/).length;
+  return Math.ceil(words / 200);
+}
+
+// Generate excerpt from content if not provided
+function generateExcerpt(content: string, maxLength = 200): string {
+  // Strip markdown and get plain text
+  const plainText = content
+    .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+    .replace(/`[^`]+`/g, '') // Remove inline code
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Replace links with text
+    .replace(/[#*_~]/g, '') // Remove markdown formatting
+    .replace(/\n+/g, ' ') // Replace newlines with spaces
+    .trim();
+  
+  if (plainText.length <= maxLength) return plainText;
+  return plainText.slice(0, maxLength).replace(/\s+\S*$/, '') + '...';
+}
+
+// Prepare first post data
+let firstPostContent = '';
+let firstPostReadingTime = 0;
+if (firstPost) {
+  firstPostContent = firstPost.body || '';
+  firstPostReadingTime = firstPost.data.metrics?.readingTime 
+    ? Math.ceil(firstPost.data.metrics.readingTime / 60)
+    : calculateReadingTime(firstPostContent);
+}
+
+const firstPostExcerpt = firstPost?.data.excerpt || generateExcerpt(firstPostContent);
+
+// Prepare excerpts for other posts
+const postsWithExcerpts = otherPosts.map(post => ({
+  post,
+  excerpt: post.data.excerpt || generateExcerpt(post.body || '', 150),
+}));
+---
+
+<BlogLayout title="Blog" description="Updates, tutorials, and insights about Unentropy">
+  <h1 class="blog-page-title">Blog</h1>
+
+  {posts.length === 0 ? (
+    <div class="blog-empty">
+      <p>No blog posts yet. Check back soon!</p>
+    </div>
+  ) : (
+    <>
+      {/* Featured post (first one) */}
+      {firstPost && (
+        <article class="featured-post">
+          {firstPost.data.cover && (
+            <CoverImage cover={firstPost.data.cover} />
+          )}
+          <h2 class="featured-post-title">
+            <a href={`/blog/${firstPost.id}/`}>{firstPost.data.title}</a>
+          </h2>
+          <PostMeta
+            date={firstPost.data.date}
+            authors={firstPost.data.authors}
+            tags={firstPost.data.tags}
+            readingTime={firstPostReadingTime}
+            lastUpdated={firstPost.data.lastUpdated}
+          />
+          <p class="featured-post-excerpt">{firstPostExcerpt}</p>
+          <a href={`/blog/${firstPost.id}/`} class="read-more">Read more →</a>
+        </article>
+      )}
+
+      {/* Other posts */}
+      {postsWithExcerpts.length > 0 && (
+        <div class="post-list">
+          {postsWithExcerpts.map(({ post, excerpt }) => (
+            <PostCard post={post} excerpt={excerpt} />
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {page.lastPage > 1 && (
+        <nav class="pagination">
+          {page.url.prev ? (
+            <a href={page.url.prev} class="pagination-link">← Prev</a>
+          ) : (
+            <span class="pagination-link disabled">← Prev</span>
+          )}
+          
+          {Array.from({ length: page.lastPage }, (_, i) => i + 1).map((num) => (
+            <a
+              href={num === 1 ? '/blog/' : `/blog/${num}/`}
+              class:list={['pagination-link', { active: num === page.currentPage }]}
+            >
+              {num}
+            </a>
+          ))}
+          
+          {page.url.next ? (
+            <a href={page.url.next} class="pagination-link">Next →</a>
+          ) : (
+            <span class="pagination-link disabled">Next →</span>
+          )}
+        </nav>
+      )}
+    </>
+  )}
+</BlogLayout>

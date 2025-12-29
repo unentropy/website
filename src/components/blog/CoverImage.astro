@@ -1,0 +1,53 @@
+---
+import { Image } from 'astro:assets';
+
+interface CoverSingle {
+  alt: string;
+  image: ImageMetadata | string;
+}
+
+interface CoverDarkLight {
+  alt: string;
+  dark: ImageMetadata | string;
+  light: ImageMetadata | string;
+}
+
+type Cover = CoverSingle | CoverDarkLight;
+
+interface Props {
+  cover: Cover;
+}
+
+const { cover } = Astro.props;
+
+function isSingleCover(c: Cover): c is CoverSingle {
+  return 'image' in c;
+}
+
+function isImageMetadata(img: ImageMetadata | string): img is ImageMetadata {
+  return typeof img === 'object' && 'src' in img;
+}
+---
+
+<div class="cover-image">
+  {isSingleCover(cover) ? (
+    isImageMetadata(cover.image) ? (
+      <Image src={cover.image} alt={cover.alt} />
+    ) : (
+      <img src={cover.image} alt={cover.alt} />
+    )
+  ) : (
+    <>
+      {isImageMetadata(cover.dark) ? (
+        <Image src={cover.dark} alt={cover.alt} class="cover-image-dark" />
+      ) : (
+        <img src={cover.dark} alt={cover.alt} class="cover-image-dark" />
+      )}
+      {isImageMetadata(cover.light) ? (
+        <Image src={cover.light} alt={cover.alt} class="cover-image-light" />
+      ) : (
+        <img src={cover.light} alt={cover.alt} class="cover-image-light" />
+      )}
+    </>
+  )}
+</div>

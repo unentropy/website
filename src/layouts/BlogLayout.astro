@@ -1,0 +1,163 @@
+---
+import 'virtual:starlight/user-css';
+import '../../node_modules/@astrojs/starlight/style/layers.css';
+import '../../node_modules/@astrojs/starlight/style/props.css';
+import '../../node_modules/@astrojs/starlight/style/reset.css';
+import '../../node_modules/@astrojs/starlight/style/util.css';
+import '../../node_modules/@astrojs/starlight/style/markdown.css';
+import 'virtual:starlight/optional-css';
+import '../styles/blog.css';
+
+import ThemeProvider from 'virtual:starlight/components/ThemeProvider';
+import ThemeSelect from 'starlight-theme-nova/components/ThemeSelect.astro';
+import SocialIcons from 'starlight-theme-nova/components/SocialIcons.astro';
+import logo from '../assets/logo.svg';
+import logoIcon from '../assets/logo-icon.svg';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const currentYear = new Date().getFullYear();
+---
+
+<html lang="en" dir="ltr" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} | Unentropy Blog</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <ThemeProvider />
+  </head>
+  <body>
+    <header class="blog-header">
+      <div class="blog-header-inner">
+        <a href="/" class="site-title">
+          <img src={logo.src} alt="Unentropy" class="logo-full" />
+          <img src={logoIcon.src} alt="Unentropy" class="logo-icon" />
+        </a>
+        <nav class="blog-nav">
+          <a href="/blog/" class="nav-link">Blog</a>
+          <a href="/getting-started/" class="nav-link">Documentation</a>
+          <SocialIcons />
+          <ThemeSelect />
+        </nav>
+      </div>
+    </header>
+
+    <main class="blog-main">
+      <div class="blog-content sl-markdown-content">
+        <slot />
+      </div>
+    </main>
+
+    <footer class="blog-footer">
+      <div class="footer-content">
+        <div class="footer-copyright">&copy;{currentYear} Unentropy</div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .blog-header {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  .blog-header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .site-title img {
+    height: 2rem;
+    width: auto;
+  }
+
+  .logo-full {
+    display: block;
+  }
+
+  .logo-icon {
+    display: none;
+  }
+
+  :global([data-theme="light"]) .site-title img {
+    filter: brightness(0);
+  }
+
+  :global([data-theme="dark"]) .site-title img {
+    filter: brightness(0) invert(1);
+  }
+
+  .blog-nav {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .nav-link {
+    color: var(--sl-color-text);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .nav-link:hover {
+    color: var(--sl-color-text-accent);
+  }
+
+  /* Mobile: show icon logo, reduce spacing */
+  @media (max-width: 600px) {
+    .logo-full {
+      display: none;
+    }
+
+    .logo-icon {
+      display: block;
+    }
+
+    .blog-nav {
+      gap: 0.75rem;
+    }
+
+    .nav-link {
+      font-size: 0.875rem;
+    }
+  }
+
+  .blog-main {
+    min-height: calc(100vh - 200px);
+  }
+
+  .blog-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .blog-footer {
+    border-top: 1px solid var(--sl-color-gray-5);
+    padding: 1rem;
+    margin-top: 3rem;
+  }
+
+  .footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .footer-copyright {
+    color: var(--sl-color-gray-3);
+    font-size: 0.85rem;
+  }
+</style>
