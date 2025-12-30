@@ -60,7 +60,7 @@ What this gives you in practice:
 
 **Automatic documentation.** When specs are the source of truth, you can generate documentation from them — not just API references, but guides, tutorials, and onboarding materials that stay in sync with reality.
 
-## The Current State
+## The current state
 
 SDD frameworks are still in their early days, but they're already useful. They can turn free-form text into well-structured requirements, contracts, and tasks. This alone saves significant effort — combine it with vibe-coding for the implementation, and you can launch an MVP remarkably fast.
 
