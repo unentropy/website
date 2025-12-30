@@ -1,6 +1,7 @@
 ---
 title: Why You Should Pay Attention to Spec-Driven Development
 date: 2025-12-28
+draft: true
 authors: mat
 excerpt: Vibe-coding gets all the headlines, but there's another AI-powered pattern emerging that I think will matter more in the long run — Spec-Driven Development.
 cover:
@@ -11,13 +12,13 @@ tags:
   - SDD
 ---
 
-# Why You Should Pay Attention to Spec-Driven Development
+# Why you should pay attention to Spec-Driven Development
 
 Vibe-coding gets all the headlines, but there's another AI-powered pattern emerging that I think will matter more in the long run — Spec-Driven Development.
 
 I tried two SDD frameworks on real projects this year. Here are my thoughts after building a few non-trivial applications with both.
 
-## The Old Problem with Specifications
+## The old problem with specifications
 
 Building specifications is already a well-established process. You gather the requirements — business, functional, and technical — you put them in a template, you iterate, and then you proceed with the implementation. It's valuable work: it helps narrow down what stakeholders really need, it formalizes non-obvious technical choices, it surfaces edge cases early.
 
@@ -29,7 +30,7 @@ As the Spec-Kit documentation puts it: "Code was truth. Everything else was, at 
 
 The result? Code becomes the ultimate source of truth for how a system behaves.
 
-## The Paradigm Shift
+## The paradigm shift
 
 SDD flips this relationship. Specifications don't serve code — code serves specifications.
 
@@ -39,7 +40,7 @@ Even better, LLMs are good at analyzing tradeoffs, doing competitive analysis, a
 
 With this efficiency boost, maintaining specs becomes viable. When you want to make a change, you update the spec first, and the LLM handles the implementation. The spec stays current because it's part of the workflow, not a separate document that needs manual synchronisation.
 
-## Why This Matters Now
+## Why this matters now
 
 Three trends are converging to make SDD not just possible, but necessary:
 
@@ -49,7 +50,7 @@ Three trends are converging to make SDD not just possible, but necessary:
 
 **The pace of change has accelerated.** Pivots are no longer exceptional — they're expected. Traditional development treats requirement changes as disruptions, requiring manual propagation through documentation, design, and code. SDD transforms pivots into systematic regenerations rather than manual rewrites.
 
-## What SDD Actually Gives You
+## What SDD actually gives you
 
 What this gives you in practice:
 
@@ -69,7 +70,7 @@ The generated code is often sloppy. SDD doesn't replace engineering skill — yo
 
 Cross-spec consistency is unsolved. Once you start accumulating multiple specifications, managing their interdependencies becomes tedious. Neither Spec-Kit nor OpenSpec provides robust tooling for checking consistency across specs and keeping them aligned. Not yet, anyway.
 
-## Where to Start
+## Where to start
 
 I tried two SDD frameworks:
 
