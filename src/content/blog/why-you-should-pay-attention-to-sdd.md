@@ -1,11 +1,11 @@
 ---
 title: Why You Should Pay Attention to Spec-Driven Development
-date: 2025-12-28
-draft: true
+date: 2026-01-03
+draft: false
 authors: mat
 excerpt: Vibe-coding gets all the headlines, but there's another AI-powered pattern emerging that I think will matter more in the long run — Spec-Driven Development.
 cover:
-  alt: "Example Spec-Kit project structure"
+  alt: Example Spec-Kit project structure
   image: ./sdd_cover.png
 tags:
   - AI
