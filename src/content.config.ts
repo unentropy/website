@@ -9,7 +9,7 @@ const blogAuthorSchema = z.object({
   name: z.string().min(1),
   title: z.string().optional(),
   picture: z.string().optional(),
-  url: z.string().url().optional(),
+  url: z.url().optional(),
 });
 
 // Blog collection schema - 100% compatible with starlight-blog plugin

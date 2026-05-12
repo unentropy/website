@@ -35,8 +35,8 @@ await attachRouteDataAndRunMiddleware(
 const { starlightRoute } = Astro.locals;
 
 const pagefindEnabled =
-	starlightRoute.entry.slug !== '404' &&
-	!starlightRoute.entry.slug.endsWith('/404') &&
+	starlightRoute.entry.id !== '404' &&
+	!starlightRoute.entry.id.endsWith('/404') &&
 	starlightRoute.entry.data.pagefind !== false;
 
 const htmlDataAttributes: DOMStringMap = { 'data-theme': 'dark' };
