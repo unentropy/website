@@ -189,7 +189,7 @@ Shell command to execute for collecting this metric. The command's stdout is cap
 - `@collect loc <path>` - Count lines of code
 - `@collect size <path>` - Calculate file size
 - `@collect coverage-lcov <path> [--type line|branch|function]` - Extract LCOV coverage
-- `@collect coverage-cobertura <path> [--type line|branch|function]` - Extract Cobertura XML coverage
+- `@collect coverage-cobertura <paths...> [--type line|branch|function]` - Extract and merge Cobertura XML coverage
 
 #### `unit`
 

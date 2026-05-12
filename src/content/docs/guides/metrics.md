@@ -79,6 +79,39 @@ Track branch or function coverage using the `--type` option:
 - **Unit**: Percent
 - **Available types**: `line` (default), `branch`, `function`
 
+#### Merging Coverage Reports
+
+When running tests in parallel CI jobs, each job produces a partial coverage report. Merge them into a single combined result by passing multiple paths to the collector:
+
+```json
+{
+  "metrics": {
+    "coverage": {
+      "$ref": "coverage",
+      "command": "@collect coverage-cobertura ./coverage/report1.xml ./coverage/report2.xml"
+    }
+  }
+}
+```
+
+For parallel test shards producing timestamped reports, use a shell glob:
+
+```json
+{
+  "metrics": {
+    "coverage": {
+      "$ref": "coverage",
+      "command": "@collect coverage-cobertura ./coverage/*-cobertura.xml"
+    }
+  }
+}
+```
+
+The merge sums covered and valid counts across all reports, then recomputes the percentage — producing a correctly weighted combined rate. Supports all three coverage types (`--type line|branch|function`).
+
+- **Unit**: Percent
+- **Note**: Requires coverage report generation before metric collection
+
 ### Code Size Metrics
 
 #### Lines of Code
@@ -319,19 +352,20 @@ Extract coverage from LCOV format:
 
 - `--type <line|branch|function>` - Coverage type to extract (default: `line`)
 
-#### `@collect coverage-cobertura <path>`
+#### `@collect coverage-cobertura <paths...>`
 
-Extract coverage from Cobertura XML format:
+Extract and merge coverage from Cobertura XML format:
 
 ```bash
 @collect coverage-cobertura ./coverage/coverage.xml
-@collect coverage-cobertura ./coverage/coverage.xml --type branch
-@collect coverage-cobertura ./coverage/coverage.xml --type function
+@collect coverage-cobertura ./coverage/report1.xml ./coverage/report2.xml
+@collect coverage-cobertura ./coverage/*-cobertura.xml --type branch
 ```
 
 **Options**:
 
 - `--type <line|branch|function>` - Coverage type to extract (default: `line`)
+- Accepts multiple paths — coverage data is merged by summing covered/valid counts across all reports
 
 ## Example Configurations
 
