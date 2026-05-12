@@ -37,9 +37,22 @@ The `command` property can be any shell command that outputs a single number to 
 
 ### Coverage Metrics
 
-#### Test Coverage
+Unentropy supports two coverage report formats. Choose the one that matches your test framework.
 
-Track overall test coverage percentage across your codebase:
+#### Available Coverage Formats
+
+|                      | LCOV                             | Cobertura                             |
+| -------------------- | -------------------------------- | ------------------------------------- |
+| **Collector**        | `@collect coverage-lcov`         | `@collect coverage-cobertura`         |
+| **File format**      | `.lcov` / `lcov.info`            | `.xml` (Cobertura XML)                |
+| **Typical tools**    | Jest, Istanbul, nyc              | PHPUnit, gcovr, OpenCppCoverage       |
+| **Syntax**           | `<path>` (single file)           | `<paths...>` (single or multiple)     |
+| **Multi-report merge** | Not supported                  | Supported                             |
+| **Coverage types**   | `line`, `branch`, `function`     | `line`, `branch`, `function`          |
+
+#### LCOV
+
+Track coverage from LCOV reports (Jest, Istanbul, nyc):
 
 ```json
 {
@@ -47,21 +60,7 @@ Track overall test coverage percentage across your codebase:
     "coverage": {
       "$ref": "coverage",
       "command": "@collect coverage-lcov ./coverage/lcov.info"
-    }
-  }
-}
-```
-
-- **Unit**: Percent (displays as `87.5%`)
-- **Note**: Requires coverage report generation before metric collection
-
-#### Branch and Function Coverage
-
-Track branch or function coverage using the `--type` option:
-
-```json
-{
-  "metrics": {
+    },
     "branch-coverage": {
       "$ref": "coverage",
       "name": "Branch Coverage",
@@ -77,11 +76,24 @@ Track branch or function coverage using the `--type` option:
 ```
 
 - **Unit**: Percent
-- **Available types**: `line` (default), `branch`, `function`
+- **Note**: Requires coverage report generation before metric collection
 
-#### Merging Coverage Reports
+#### Cobertura
 
-When running tests in parallel CI jobs, each job produces a partial coverage report. Merge them into a single combined result by passing multiple paths to the collector:
+Track coverage from Cobertura XML reports (PHPUnit, gcovr). Unlike LCOV, Cobertura supports merging multiple reports — useful when tests run in parallel CI jobs.
+
+```json
+{
+  "metrics": {
+    "coverage": {
+      "$ref": "coverage",
+      "command": "@collect coverage-cobertura ./coverage/coverage.xml"
+    }
+  }
+}
+```
+
+Pass multiple paths to merge:
 
 ```json
 {
@@ -94,7 +106,7 @@ When running tests in parallel CI jobs, each job produces a partial coverage rep
 }
 ```
 
-For parallel test shards producing timestamped reports, use a shell glob:
+Or use a glob for sharded output:
 
 ```json
 {
@@ -107,7 +119,21 @@ For parallel test shards producing timestamped reports, use a shell glob:
 }
 ```
 
-The merge sums covered and valid counts across all reports, then recomputes the percentage — producing a correctly weighted combined rate. Supports all three coverage types (`--type line|branch|function`).
+Also supports `--type branch` and `--type function`:
+
+```json
+{
+  "metrics": {
+    "branch-coverage": {
+      "$ref": "coverage",
+      "name": "Branch Coverage",
+      "command": "@collect coverage-cobertura ./coverage/*-cobertura.xml --type branch"
+    }
+  }
+}
+```
+
+The merge sums covered and valid counts across all reports, then recomputes the percentage — producing a correctly weighted combined rate.
 
 - **Unit**: Percent
 - **Note**: Requires coverage report generation before metric collection
