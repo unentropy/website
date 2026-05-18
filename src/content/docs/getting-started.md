@@ -13,6 +13,16 @@ unentropy_docs:
 
 Unentropy helps you track code metrics directly in your CI pipeline—without external servers, cloud dependencies, or vendor lock-in. Get started in under 2 minutes.
 
+:::tip[Using an AI coding agent?]
+Install the Unentropy skill for guided help configuring metrics, quality gates, and CI workflows:
+
+```bash
+npx skills add unentropy/skills --skill unentropy
+```
+
+Learn more at [skills.sh/unentropy/skills](https://skills.sh/unentropy/skills).
+:::
+
 ## What You'll Learn
 
 This guide shows you how to:

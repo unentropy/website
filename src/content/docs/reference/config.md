@@ -12,6 +12,14 @@ unentropy_docs:
 
 The `unentropy.json` file configures which metrics to track, storage options, and quality gate thresholds. This reference covers all configuration options.
 
+:::note[Need help configuring?]
+If you are using an AI coding agent, install the Unentropy skill for guided, step-by-step help:
+
+```bash
+npx skills add unentropy/skills --skill unentropy
+```
+:::
+
 ## File Location
 
 Place `unentropy.json` in your project root directory:
