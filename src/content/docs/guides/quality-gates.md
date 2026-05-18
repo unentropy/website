@@ -126,8 +126,8 @@ Metric can increase, but not by more than a percentage:
 ```json
 {
   "metric": "bundle",
-  "mode": "delta-max-drop",
-  "target": 5
+      "mode": "delta-max-drop",
+      "maxDropPercent": 5
 }
 ```
 
@@ -235,8 +235,7 @@ Configure thresholds for as many metrics as needed:
       },
       {
         "metric": "loc",
-        "mode": "delta-max-drop",
-        "target": 10
+        "mode": "no-regression"
       }
     ]
   }
@@ -294,7 +293,7 @@ Keep bundle size under control:
       {
         "metric": "bundle",
         "mode": "delta-max-drop",
-        "target": 5
+        "maxDropPercent": 5
       }
     ]
   }
@@ -333,7 +332,7 @@ Monitor multiple metrics:
       {
         "metric": "bundle",
         "mode": "delta-max-drop",
-        "target": 5
+        "maxDropPercent": 5
       }
     ]
   }
@@ -391,7 +390,7 @@ For metrics that naturally grow (like LOC), use `delta-max-drop`:
 {
   "metric": "loc",
   "mode": "delta-max-drop",
-  "target": 15
+  "maxDropPercent": 15
 }
 ```
 

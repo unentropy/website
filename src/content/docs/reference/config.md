@@ -398,17 +398,33 @@ Comparison mode:
 - `min` - Metric must not drop below target
 - `max` - Metric must not exceed target
 - `no-regression` - Metric must not decrease from baseline
-- `delta-max-drop` - Metric can increase, but not more than target percentage
+- `delta-max-drop` - Metric can increase, but not more than `maxDropPercent` percentage
 
 ##### `target`
 
 **Type**: number  
-**Required**: Yes (except for `no-regression` mode)
+**Required**: Yes (for `min` and `max` modes)
 
 Threshold value. Meaning depends on mode:
 
 - `min` / `max`: Absolute value
-- `delta-max-drop`: Percentage (e.g., `5` = 5% max increase)
+
+Not used for `no-regression` or `delta-max-drop` modes.
+
+##### `maxDropPercent`
+
+**Type**: number  
+**Required**: Yes (only for `delta-max-drop` mode)
+
+Maximum allowed percentage increase (e.g., `5` = 5% max increase).
+
+```json
+{
+  "metric": "bundle",
+  "mode": "delta-max-drop",
+  "maxDropPercent": 5
+}
+```
 
 See [Quality Gates Guide](../guides/quality-gates.md) for examples.
 
@@ -460,12 +476,11 @@ See [Quality Gates Guide](../guides/quality-gates.md) for examples.
       {
         "metric": "bundle",
         "mode": "delta-max-drop",
-        "target": 5
+        "maxDropPercent": 5
       },
       {
         "metric": "src-loc",
-        "mode": "delta-max-drop",
-        "target": 15
+        "mode": "no-regression"
       }
     ]
   }
