@@ -1,6 +1,5 @@
 ---
 import HomepageLayout from "../layouts/HomepageLayout.astro";
-import { Badge } from "@astrojs/starlight/components";
 import { Code } from "starlight-theme-nova/components";
 ---
 
@@ -12,150 +11,533 @@ import { Code } from "starlight-theme-nova/components";
   }}
   hasSidebar={false}
 >
-  <div class="hero">
-    <div class="hero-content">
-      <h1 class="hero-title">Your code under your control</h1>
-      <p class="hero-tagline">
-        CI-native metrics and quality gates. Zero dependencies.
-      </p>
-      <div class="hero-code">
-        <Code lang="bash" code={`npx unentropy init
+  <!-- HERO -->
+  <section class="hero">
+    <h1 class="hero-title">Your code under your control</h1>
+    <p class="hero-tagline">
+      CI-native metrics and quality gates. Zero dependencies.
+    </p>
+    <div class="hero-code">
+      <Code lang="bash" code={`npx unentropy init
 
 # Using a coding agent? Install the Unentropy skill for guided help
-npx skills add unentropy/skills --skill unentropy                  `} />
-      </div>
+npx skills add unentropy/skills --skill unentropy`} />
     </div>
-  </div>
-
-  <div class="demo-video">
-    <video src="/demo.webm" autoplay playsinline loop muted preload="auto">
-      Your browser does not support the video tag.
-    </video>
-  </div>
-
-  <div class="homepage-content">
-    <p>
-      <Badge text="Beta" variant="caution" /> This project is currently in beta (0.x).
-      APIs may change between minor versions.
-    </p>
-
-    <h2>What is Unentropy?</h2>
-    <p>
-      <strong>Unentropy</strong> is an open-source tool for tracking code metrics
-      directly in your CI pipeline, based on in-repository configuration.
-    </p>
-
-    <h2>Key Features</h2>
-    <ul>
-      <li>
-        <strong>Built-in Metrics:</strong> Start tracking coverage, bundle size or
-        lines of code in minutes
-      </li>
-      <li>
-        <strong>Trend Visualization:</strong> Generate interactive HTML reports showing
-        how your metrics evolve over time
-      </li>
-      <li>
-        <strong>Custom Metrics Support:</strong> Track domain-specific indicators
-        like framework adoption ratios, API endpoint counts, or refactoring progress
-        using simple command outputs
-      </li>
-      <li>
-        <strong>Quality Gates:</strong> Set thresholds and get automated PR feedback—fail
-        the build if coverage drops or bundle size exceeds limits
-      </li>
-      <li>
-        <strong>Complete Ownership:</strong> Store metrics in GitHub Actions artifacts
-        or your own S3-compatible storage—your data never leaves your infrastructure
-      </li>
-      <li>
-        <strong>Git-Native:</strong> Every metric is tied to its commit SHA; configuration
-        lives in your repo and evolves with your code
-      </li>
-    </ul>
-
-    <div class="docs-cta">
-      <a href="/getting-started/">Get started →</a>
+    <div class="hero-actions">
+      <a href="/getting-started/" class="btn">Get started →</a>
+      <a href="https://github.com/unentropy/unentropy" class="btn btn--ghost">View on GitHub</a>
     </div>
+  </section>
+
+  <!-- STORYBOARD -->
+  <section class="storyboard">
+    <div class="storyboard-grid not-content">
+
+      <article class="story-card">
+        <div class="story-eyebrow"><span class="idx">01</span>CONFIG</div>
+        <h3 class="story-title">Declare metrics in <code>unentropy.json</code></h3>
+        <p class="story-desc">
+          A JSON file in your repo lists every metric and any quality gate.
+          <code>npx unentropy init</code> writes a sensible default for
+          your project type — JavaScript, PHP, Go, or Python.
+        </p>
+        <pre class="story-vis"><span class="tok-com">// unentropy.json</span>
+&#123;
+  <span class="tok-str">"metrics"</span>: &#123;
+    <span class="tok-str">"test-coverage"</span>: &#123;
+      <span class="tok-key">"$ref"</span>: <span class="tok-str">"coverage"</span>,
+      <span class="tok-key">"command"</span>: <span class="tok-str">"@collect coverage-lcov lcov.info"</span>
+    &#125;,
+    <span class="tok-str">"src-loc"</span>: &#123;
+      <span class="tok-key">"$ref"</span>: <span class="tok-str">"loc"</span>,
+      <span class="tok-key">"command"</span>: <span class="tok-str">"@collect loc src"</span>
+    &#125;
+  &#125;,
+  <span class="tok-str">"qualityGate"</span>: &#123;
+    <span class="tok-key">"thresholds"</span>: [
+      &#123;
+        <span class="tok-key">"metric"</span>: <span class="tok-str">"test-coverage"</span>,
+        <span class="tok-key">"mode"</span>: <span class="tok-str">"min"</span>,
+        <span class="tok-key">"target"</span>: <span class="tok-num">80</span>
+      &#125;
+    ]
+  &#125;
+&#125;</pre>
+      </article>
+
+      <article class="story-card">
+        <div class="story-eyebrow"><span class="idx">02</span>TRACK + GATE</div>
+        <h3 class="story-title">Track on push. Gate on PR.</h3>
+        <p class="story-desc">
+          Two actions read the same config. <code>track-metrics</code>
+          updates history on every push to main; <code>quality-gate</code>
+          evaluates your thresholds on every pull request and comments back.
+        </p>
+        <pre class="story-vis"><span class="tok-com"># Track metrics on every push to main</span>
+<span class="tok-com"># .github/workflows/metrics.yml</span>
+<span class="tok-key">on</span>:
+  <span class="tok-key">push</span>:
+    <span class="tok-key">branches</span>: [<span class="tok-str">main</span>]
+<span class="tok-key">jobs</span>:
+  <span class="tok-key">track</span>:
+    <span class="tok-key">runs-on</span>: <span class="tok-str">ubuntu-latest</span>
+    <span class="tok-key">steps</span>:
+      - <span class="tok-key">uses</span>: <span class="tok-str">actions/checkout@v4</span>
+      - <span class="tok-key">uses</span>: <span class="tok-str">unentropy/track-metrics-action@v1</span>
+
+<span class="tok-com"># Gate every pull request</span>
+<span class="tok-com"># .github/workflows/quality-gate.yml</span>
+<span class="tok-key">on</span>:
+  <span class="tok-key">pull_request</span>: ~
+<span class="tok-key">jobs</span>:
+  <span class="tok-key">gate</span>:
+    <span class="tok-key">runs-on</span>: <span class="tok-str">ubuntu-latest</span>
+    <span class="tok-key">steps</span>:
+      - <span class="tok-key">uses</span>: <span class="tok-str">actions/checkout@v4</span>
+      - <span class="tok-key">uses</span>: <span class="tok-str">unentropy/quality-gate-action@v1</span></pre>
+      </article>
+
+      <article class="story-card story-card--full">
+        <div class="story-eyebrow"><span class="idx">03</span>REPORT</div>
+        <h3 class="story-title">Trends, gates, dashboards</h3>
+        <p class="story-desc">
+          A static HTML report published to GitHub Pages — sparklines per
+          metric, deltas vs the previous commit, and pass/warn pills from
+          your quality gate. PR comments mirror the same status.
+        </p>
+        <div class="story-vis story-vis--report">
+          <div class="report-grid not-content">
+
+            <div class="report-tile">
+              <div class="report-label">Test coverage</div>
+              <div class="report-num">87.30%<span class="report-delta delta-up"> ▲ +0.40</span></div>
+              <svg class="report-spark" viewBox="0 0 200 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="0,24 25,22 50,20 75,16 100,18 125,14 150,12 175,8 200,6" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <polyline points="0,24 25,22 50,20 75,16 100,18 125,14 150,12 175,8 200,6 200,32 0,32" fill="var(--accent)" fill-opacity="0.08" stroke="none" />
+              </svg>
+              <span class="pill pill--up">PASS · MIN 80%</span>
+            </div>
+
+            <div class="report-tile">
+              <div class="report-label">Bundle size</div>
+              <div class="report-num">41,204 B<span class="report-delta delta-down"> ▲ +216</span></div>
+              <svg class="report-spark" viewBox="0 0 200 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="0,22 25,21 50,19 75,17 100,18 125,16 150,14 175,12 200,10" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <polyline points="0,22 25,21 50,19 75,17 100,18 125,16 150,14 175,12 200,10 200,32 0,32" fill="var(--warn)" fill-opacity="0.08" stroke="none" />
+              </svg>
+              <span class="pill pill--warn">WARN · +0.5%</span>
+            </div>
+
+            <div class="report-tile">
+              <div class="report-label">Lines of code</div>
+              <div class="report-num">12,341<span class="report-delta delta-flat"> ±0</span></div>
+              <svg class="report-spark" viewBox="0 0 200 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="0,18 25,16 50,18 75,16 100,17 125,15 150,16 175,15 200,16" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <polyline points="0,18 25,16 50,18 75,16 100,17 125,15 150,16 175,15 200,16 200,32 0,32" fill="var(--text-muted)" fill-opacity="0.06" stroke="none" />
+              </svg>
+              <span class="pill">FLAT</span>
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section">
+    <div class="features-head">
+      <div class="features-eyebrow"><span class="accent">04</span> · FEATURES</div>
+      <h2 class="features-title">Six things you get out of the box</h2>
+    </div>
+
+    <div class="features-grid not-content">
+
+      <article class="feature">
+        <div class="feature-num">F · 01</div>
+        <h3 class="feature-title">Built-in Metrics</h3>
+        <p class="feature-desc">
+          Start tracking coverage, bundle size or lines of code in minutes.
+        </p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-num">F · 02</div>
+        <h3 class="feature-title">Trend Visualization</h3>
+        <p class="feature-desc">
+          Generate interactive HTML reports showing how your metrics evolve
+          over time.
+        </p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-num">F · 03</div>
+        <h3 class="feature-title">Custom Metrics</h3>
+        <p class="feature-desc">
+          Track domain-specific indicators — framework adoption ratios, API
+          endpoint counts, or refactoring progress — using simple command
+          outputs.
+        </p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-num">F · 04</div>
+        <h3 class="feature-title">Quality Gates</h3>
+        <p class="feature-desc">
+          Set thresholds and get automated PR feedback — fail the build if
+          coverage drops or bundle size exceeds limits.
+        </p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-num">F · 05</div>
+        <h3 class="feature-title">Complete Ownership</h3>
+        <p class="feature-desc">
+          Store metrics in GitHub Actions artifacts or your own S3-compatible
+          storage — your data never leaves your infrastructure.
+        </p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-num">F · 06</div>
+        <h3 class="feature-title">Git-Native</h3>
+        <p class="feature-desc">
+          Every metric is tied to its commit SHA. Configuration lives in your
+          repo and evolves with your code.
+        </p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- CLOSING CTA — original simple link -->
+  <div class="docs-cta">
+    <a href="/getting-started/">Get started →</a>
   </div>
 </HomepageLayout>
 
 <style>
+  /* ============ HERO ============ */
   .hero {
-    padding: 4rem 1rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem 2.5rem;
     text-align: center;
   }
 
-  .hero-content {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
   .hero-title {
+    font-family: var(--font-mono);
     font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 700;
-    line-height: 1.2;
-    margin: 0 0 1rem;
-    color: var(--sl-color-white);
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--text);
+    letter-spacing: -0.025em;
+    margin: 0 auto 1rem;
+    max-width: 22ch;
   }
 
   .hero-tagline {
-    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
-    color: var(--sl-color-gray-2);
-    margin: 0 0 2rem;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--text-dim);
+    margin: 0 auto 2rem;
+    max-width: 50ch;
+    line-height: 1.5;
+  }
+
+  .hero-actions {
+    display: inline-flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .hero-code {
     max-width: 680px;
-    margin: 0 auto;
+    margin: 0 auto 1.75rem;
+    text-align: left;
   }
 
-  .demo-video {
+  /* ============ STORYBOARD ============ */
+  .storyboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 3rem;
+  }
+
+  .storyboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  .story-card--full {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 900px) {
+    .storyboard-grid { grid-template-columns: 1fr; }
+  }
+
+  .story-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 1.25rem 1.25rem 1.5rem;
     display: flex;
-    justify-content: center;
-    padding: 0 1rem 3rem;
+    flex-direction: column;
+    min-height: 290px;
+    /* Critical: grid items default to min-width: auto = intrinsic content size.
+       With white-space: pre below, that pushes the card wider than 1fr.
+       Setting min-width: 0 restores the 1fr allocation. */
+    min-width: 0;
   }
 
-  .demo-video video {
-    width: 70%;
-    max-width: 840px;
-    height: auto;
-    border-radius: 0.5rem;
-  }
-
-  @media (max-width: 768px) {
-    .demo-video video {
-      width: 100%;
-    }
-  }
-
-  .homepage-content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  .homepage-content h2 {
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .homepage-content ul {
-    margin-bottom: 2rem;
-  }
-
-  .docs-cta {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .docs-cta a {
-    color: var(--sl-color-white);
-    text-decoration: none;
+  .story-title code {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--surface-card);
+    border: 1px solid var(--border-soft);
+    padding: 1px 5px;
+    border-radius: var(--r-sm);
+    color: var(--accent);
     font-weight: 500;
   }
 
+  .story-desc code {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    color: var(--accent);
+    background: var(--surface-card);
+    border: 1px solid var(--border-soft);
+    padding: 1px 4px;
+    border-radius: var(--r-sm);
+  }
+
+  .story-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--t-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+  }
+  .story-eyebrow .idx { color: var(--accent); margin-right: 0.4rem; }
+
+  .story-title {
+    font-family: var(--font-mono);
+    font-size: var(--t-md);
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.01em;
+  }
+
+  .story-desc {
+    font-size: var(--t-sm);
+    line-height: 1.5;
+    color: var(--text-dim);
+    margin: 0 0 1rem;
+  }
+
+  /* .story-vis is either a <pre> (cards 01, 02 — preformatted code/yaml)
+     or a <div> (card 03 — structured report widget). Reset pre's UA
+     margins so both elements render identically. */
+  .story-vis {
+    margin: 0;
+    margin-top: auto;
+    background: var(--surface-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-md);
+    padding: 0.75rem 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre;
+    /* Scroll horizontally within the box if a line is longer than the card.
+       Avoids page-level horizontal scroll when grid columns are narrow. */
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-width: 0;
+  }
+  .story-vis .tok-com { color: var(--text-muted); font-style: italic; }
+  .story-vis .tok-str { color: var(--up); }
+  .story-vis .tok-kw  { color: var(--accent); }
+  .story-vis .tok-key { color: var(--text-dim); }
+  .story-vis .prompt  { color: var(--accent); user-select: none; }
+  .story-vis .ok      { color: var(--up); }
+  .story-vis .dim     { color: var(--text-muted); }
+
+  /* Report widget — full-width card uses an internal 3-tile grid */
+  .story-vis--report {
+    white-space: normal;
+    padding: 1rem 1.1rem;
+  }
+  .report-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 700px) {
+    .report-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+  }
+  .report-tile {
+    display: flex;
+    flex-direction: column;
+  }
+  .report-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+  }
+  .report-num {
+    font-size: 1.625rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    font-family: var(--font-mono);
+  }
+  .report-delta {
+    font-size: 0.8125rem;
+    margin-left: 0.1rem;
+  }
+  .report-delta.delta-up   { color: var(--up); }
+  .report-delta.delta-down { color: var(--warn); }
+  .report-delta.delta-flat { color: var(--text-muted); }
+
+  .report-spark {
+    display: block;
+    margin: 0.5rem 0 0.7rem;
+    height: 36px;
+    width: 100%;
+  }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 2px 7px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: var(--surface);
+    border-radius: var(--r-sm);
+    align-self: flex-start;
+  }
+  .pill::before {
+    content: ""; width: 5px; height: 5px;
+    background: var(--text-muted); display: inline-block;
+    border-radius: var(--r-sm);
+  }
+  .pill--up { color: var(--up); border-color: color-mix(in srgb, var(--up) 40%, transparent); }
+  .pill--up::before { background: var(--up); }
+  .pill--warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, transparent); }
+  .pill--warn::before { background: var(--warn); }
+
+  /* ============ FEATURES ============ */
+  .features-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+  .features-head {
+    margin-bottom: 1.5rem;
+  }
+  .features-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--t-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+  .features-eyebrow .accent { color: var(--accent); }
+  .features-title {
+    font-family: var(--font-mono);
+    font-size: var(--t-lg);
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.015em;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 900px) {
+    .features-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+  }
+
+  .feature {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-md);
+    padding: 1rem 1.1rem 1.25rem;
+    transition: border-color 160ms ease, background 160ms ease;
+  }
+  .feature:hover {
+    border-color: var(--border);
+    background: color-mix(in srgb, var(--surface) 100%, var(--accent) 4%);
+  }
+  .feature-num {
+    font-family: var(--font-mono);
+    font-size: var(--t-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .feature-title {
+    font-family: var(--font-mono);
+    font-size: var(--t-sm);
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .feature-desc {
+    font-size: var(--t-sm);
+    line-height: 1.5;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  /* ============ CLOSING CTA (original simple link) ============ */
+  .docs-cta {
+    max-width: 1200px;
+    margin: 1rem auto 3rem;
+    padding: 0 1.5rem;
+    text-align: center;
+  }
+  .docs-cta a {
+    font-family: var(--font-mono);
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.6rem 1.1rem;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: var(--r-md);
+    display: inline-block;
+  }
   .docs-cta a:hover {
-    color: var(--sl-color-accent);
+    filter: brightness(1.1);
+    text-decoration: none;
+  }
+  :global([data-theme="light"]) .docs-cta a {
+    color: #ffffff;
   }
 </style>

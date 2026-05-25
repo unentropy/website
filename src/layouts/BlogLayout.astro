@@ -55,8 +55,10 @@ const currentYear = new Date().getFullYear();
     </main>
 
     <footer class="blog-footer">
-      <div class="footer-content">
-        <div class="footer-copyright">&copy;{currentYear} Unentropy</div>
+      <div class="status-bar">
+        <div class="status-bar-inner">
+          <span>&copy; {currentYear} unentropy</span>
+        </div>
       </div>
     </footer>
   </body>
@@ -65,9 +67,15 @@ const currentYear = new Date().getFullYear();
 <style>
   .blog-header {
     display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 1rem;
-    border-bottom: 1px solid var(--sl-color-gray-5);
+    height: var(--sl-nav-height);
+    padding: 0 var(--sl-nav-pad-x);
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--sl-color-bg-nav);
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
   .blog-header-inner {
@@ -75,69 +83,43 @@ const currentYear = new Date().getFullYear();
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 800px;
+    max-width: 1280px;
   }
 
-  .site-title img {
-    height: 2rem;
-    width: auto;
-  }
+  /* .site-title img height is defined globally in custom.css */
+  .logo-full { display: block; }
+  .logo-icon { display: none; }
 
-  .logo-full {
-    display: block;
-  }
-
-  .logo-icon {
-    display: none;
-  }
-
-  :global([data-theme="light"]) .site-title img {
-    filter: brightness(0);
-  }
-
-  :global([data-theme="dark"]) .site-title img {
-    filter: brightness(0) invert(1);
-  }
+  :global([data-theme="light"]) .site-title img { filter: brightness(0); }
+  :global([data-theme="dark"]) .site-title img  { filter: brightness(0) invert(1); }
 
   .blog-nav {
     display: flex;
-    gap: 1rem;
+    gap: 1.25rem;
     align-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--t-xs);
   }
 
   .nav-link {
-    color: var(--sl-color-text);
+    color: var(--text-dim);
     text-decoration: none;
-    font-weight: 500;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid transparent;
     white-space: nowrap;
   }
-
   .nav-link:hover {
-    color: var(--sl-color-text-accent);
+    color: var(--text);
+    border-bottom-color: var(--accent);
   }
 
-  /* Mobile: show icon logo, reduce spacing */
   @media (max-width: 600px) {
-    .logo-full {
-      display: none;
-    }
-
-    .logo-icon {
-      display: block;
-    }
-
-    .blog-nav {
-      gap: 0.75rem;
-    }
-
-    .nav-link {
-      font-size: 0.875rem;
-    }
+    .logo-full { display: none; }
+    .logo-icon { display: block; }
+    .blog-nav { gap: 0.75rem; }
   }
 
-  .blog-main {
-    min-height: calc(100vh - 200px);
-  }
+  .blog-main { min-height: calc(100vh - 200px); }
 
   .blog-content {
     max-width: 800px;
@@ -146,18 +128,24 @@ const currentYear = new Date().getFullYear();
   }
 
   .blog-footer {
-    border-top: 1px solid var(--sl-color-gray-5);
-    padding: 1rem;
-    margin-top: 3rem;
+    margin-top: 5rem;
   }
 
-  .footer-content {
-    max-width: 800px;
+  .status-bar {
+    border-top: 1px solid var(--border-soft);
+    background: var(--surface-card);
+    font-family: var(--font-mono);
+    font-size: var(--t-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+  }
+  .status-bar-inner {
+    max-width: 1280px;
     margin: 0 auto;
-  }
-
-  .footer-copyright {
-    color: var(--sl-color-gray-3);
-    font-size: 0.85rem;
+    padding: 0.6rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 </style>

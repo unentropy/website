@@ -1,0 +1,9 @@
+/* IBM Plex Sans — body */
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+
+/* Commit Mono — display, UI chrome, code */
+@import "@fontsource/commit-mono/400.css";
+@import "@fontsource/commit-mono/500.css";
+@import "@fontsource/commit-mono/600.css";

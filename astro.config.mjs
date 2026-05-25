@@ -9,7 +9,7 @@ export default defineConfig({
     starlight({
       title: "Unentropy",
       logo: {
-        src: "./src/assets/logo-icon.svg",
+        src: "./src/assets/logo.svg",
         replacesTitle: true,
       },
       social: [
@@ -19,7 +19,11 @@ export default defineConfig({
           href: "https://github.com/unentropy/unentropy",
         },
       ],
-      customCss: ["./src/styles/custom.css"],
+      customCss: [
+        "./src/styles/fonts.css",
+        "./src/styles/tokens.css",
+        "./src/styles/custom.css",
+      ],
       plugins: [starlightThemeNova(/* options */)],
     }),
   ],

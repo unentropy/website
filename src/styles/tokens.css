@@ -1,0 +1,455 @@
+/* ============================================================
+   UNENTROPY · LATTICE DESIGN SYSTEM
+   Spec: docs/superpowers/specs/2026-05-25-design-system-overhaul.md
+   ============================================================ */
+
+/* -----------------------------------------------------------
+   1. Lattice tokens — dark (default)
+   ----------------------------------------------------------- */
+:root {
+  --bg:            #1c2230;
+  --surface:       #161b27;
+  --surface-card:  #11151f;
+  --border:        #2a3148;
+  --border-soft:   #262d42;
+  --text:          #cad3e0;
+  --text-dim:      #9aa6bb;
+  --text-muted:    #5a6680;
+
+  --accent:        #65c2e7;
+  --accent-rgb:    101, 194, 231;
+  --accent-soft:   rgba(101, 194, 231, 0.14);
+
+  --up:            #8ec07c;
+  --down:          #e08490;
+  --warn:          #d4a663;
+
+  /* Type */
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Commit Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Scale */
+  --t-eyebrow: 0.6875rem;
+  --t-xs:      0.75rem;
+  --t-sm:      0.8125rem;
+  --t-base:    0.9375rem;
+  --t-md:      1.0625rem;
+  --t-lg:      1.375rem;
+  --t-xl:      1.75rem;
+  --t-2xl:     2.25rem;
+
+  /* Radius */
+  --r-sm: 2px;
+  --r-md: 3px;
+  --r-lg: 4px;
+}
+
+/* -----------------------------------------------------------
+   2. Lattice tokens — light
+   ----------------------------------------------------------- */
+:root[data-theme="light"] {
+  --bg:            #f4f6fa;
+  --surface:       #e8ecf2;
+  --surface-card:  #ffffff;
+  --border:        #d0d6e0;
+  --border-soft:   #dde2ea;
+  --text:          #2a3344;
+  --text-dim:      #4f5a72;
+  --text-muted:    #7c8699;
+
+  --accent:        #2c7ea2;
+  --accent-rgb:    44, 126, 162;
+  --accent-soft:   rgba(44, 126, 162, 0.10);
+
+  --up:            #4a8d3a;
+  --down:          #b94656;
+  --warn:          #a67224;
+}
+
+/* -----------------------------------------------------------
+   3. Starlight variable bridge
+   Re-map Starlight's --sl-color-* tokens to Lattice tokens.
+   Done at :root so it picks up the active theme automatically.
+   ----------------------------------------------------------- */
+:root {
+  /* Backgrounds */
+  --sl-color-bg:             var(--bg);
+  --sl-color-bg-nav:         var(--surface);
+  --sl-color-bg-sidebar:     var(--surface);
+  --sl-color-bg-inline-code: var(--surface);
+  --sl-color-bg-accent:      var(--accent);
+
+  /* Text */
+  --sl-color-text:        var(--text);
+  --sl-color-text-accent: var(--accent);
+  --sl-color-text-invert: var(--bg);
+  --sl-color-white:       var(--text);
+
+  /* Accent (Starlight uses low/mid/high — map to a usable triplet) */
+  --sl-color-accent-low:  color-mix(in srgb, var(--accent) 14%, transparent);
+  --sl-color-accent:      var(--accent);
+  --sl-color-accent-high: var(--text);
+
+  /* Gray ramp — Starlight uses these in many places; remap to our text/border ramp */
+  --sl-color-gray-1: var(--text);
+  --sl-color-gray-2: var(--text-dim);
+  --sl-color-gray-3: var(--text-muted);
+  --sl-color-gray-4: var(--text-muted);
+  --sl-color-gray-5: var(--border);
+  --sl-color-gray-6: var(--border-soft);
+  --sl-color-black:  var(--bg);
+
+  /* Hairlines */
+  --sl-color-hairline-light: var(--border);
+  --sl-color-hairline:       var(--border-soft);
+  --sl-color-hairline-shade: var(--surface-card);
+
+  /* Fonts */
+  --sl-font:      var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+}
+
+/* -----------------------------------------------------------
+   4. Body + global resets
+   ----------------------------------------------------------- */
+html {
+  background: var(--bg);
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text);
+  background-color: var(--bg);
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(202, 211, 224, 0.035) 1px,
+    transparent 0
+  );
+  background-size: 24px 24px;
+  background-position: 12px 12px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme="light"] body {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(42, 51, 68, 0.055) 1px,
+    transparent 0
+  );
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+:root[data-theme="light"] ::selection {
+  color: #ffffff;
+}
+
+/* Tabular numerals on anything that displays numbers in chrome */
+code, kbd, samp, pre,
+.sl-markdown-content table,
+.sidebar, .right-sidebar,
+.starlight-aside,
+[class*="status"], [class*="badge"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* -----------------------------------------------------------
+   5. Headings — Commit Mono, weight 600, blinking caret on H1
+   ----------------------------------------------------------- */
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+.sl-markdown-content h4,
+h1, h2, h3 {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+.sl-markdown-content h1, h1 {
+  font-size: var(--t-2xl);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.sl-markdown-content h2, h2 {
+  font-size: var(--t-xl);
+  line-height: 1.2;
+  margin-top: 3rem;
+}
+
+.sl-markdown-content h3, h3 {
+  font-size: var(--t-md);
+  margin-top: 2.25rem;
+}
+
+/* Blinking caret on H1 — only inside markdown content (avoid sidebar/nav h1s) */
+.sl-markdown-content h1::after,
+main h1:not(.no-caret)::after {
+  content: "▍";
+  color: var(--accent);
+  margin-left: 0.3rem;
+  display: inline-block;
+  transform: translateY(-0.05em);
+  animation: caret-blink 1.2s steps(2, start) infinite;
+}
+
+@keyframes caret-blink {
+  to { visibility: hidden; }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  main h1::after,
+  .sl-markdown-content h1::after {
+    animation: none;
+  }
+}
+
+/* -----------------------------------------------------------
+   6. Code — inline + block
+   ----------------------------------------------------------- */
+.sl-markdown-content :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  padding: 1px 5px;
+  border-radius: var(--r-sm);
+}
+
+.sl-markdown-content pre {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.sl-markdown-content pre code {
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  line-height: 1.65;
+  background: transparent;
+  border: 0;
+  padding: 0.9rem 1rem;
+}
+
+/* starlight-theme-nova Code component frame — match the radius */
+.expressive-code, .ec-frame, .ec-wrap, figure.expressive-code {
+  border-radius: var(--r-md) !important;
+}
+
+/* -----------------------------------------------------------
+   7. Asides — :::tip / :::caution / :::danger / :::note
+   ----------------------------------------------------------- */
+.starlight-aside {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-left-width: 2px;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.starlight-aside__title {
+  font-family: var(--font-mono);
+  font-size: var(--t-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.starlight-aside--tip     { border-left-color: var(--accent); }
+.starlight-aside--tip .starlight-aside__title { color: var(--accent); }
+
+.starlight-aside--caution { border-left-color: var(--warn); }
+.starlight-aside--caution .starlight-aside__title { color: var(--warn); }
+
+.starlight-aside--danger  { border-left-color: var(--down); }
+.starlight-aside--danger .starlight-aside__title { color: var(--down); }
+
+.starlight-aside--note    { border-left-color: var(--text-dim); }
+.starlight-aside--note .starlight-aside__title { color: var(--text-dim); }
+
+/* -----------------------------------------------------------
+   8. Badges
+   ----------------------------------------------------------- */
+.sl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: var(--t-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  background: var(--surface);
+  line-height: 1.5;
+  border-radius: var(--r-sm);
+  font-weight: 400;
+}
+
+.sl-badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  background: var(--text-muted);
+  display: inline-block;
+  border-radius: var(--r-sm);
+}
+
+.sl-badge.tip,
+.sl-badge.success {
+  color: var(--up);
+  border-color: color-mix(in srgb, var(--up) 40%, transparent);
+  background: color-mix(in srgb, var(--up) 8%, transparent);
+}
+.sl-badge.tip::before,
+.sl-badge.success::before { background: var(--up); }
+
+.sl-badge.caution {
+  color: var(--warn);
+  border-color: color-mix(in srgb, var(--warn) 40%, transparent);
+  background: color-mix(in srgb, var(--warn) 8%, transparent);
+}
+.sl-badge.caution::before { background: var(--warn); }
+
+.sl-badge.danger {
+  color: var(--down);
+  border-color: color-mix(in srgb, var(--down) 40%, transparent);
+  background: color-mix(in srgb, var(--down) 8%, transparent);
+}
+.sl-badge.danger::before { background: var(--down); }
+
+/* -----------------------------------------------------------
+   9. Buttons
+   ----------------------------------------------------------- */
+.btn {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 0.95rem;
+  background: var(--accent);
+  color: var(--bg);
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: var(--r-md);
+  border: 1px solid var(--accent);
+  cursor: pointer;
+  transition: filter 160ms ease;
+}
+.btn:hover { filter: brightness(1.1); text-decoration: none; }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.btn--ghost:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+/* Light mode — button text needs explicit white for accent bg */
+:root[data-theme="light"] .btn {
+  color: #ffffff;
+}
+
+/* -----------------------------------------------------------
+   10. Tables
+   ----------------------------------------------------------- */
+.sl-markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.sl-markdown-content th,
+.sl-markdown-content td {
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.sl-markdown-content th {
+  font-family: var(--font-mono);
+  font-size: var(--t-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 600;
+  background: var(--surface);
+  border-bottom-color: var(--border);
+}
+
+/* -----------------------------------------------------------
+   11. Sidebar
+   ----------------------------------------------------------- */
+.sidebar-content {
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+}
+
+/* Section labels — summary > .large span */
+.sidebar-content details > summary,
+.sidebar-content details > summary .large,
+.sidebar-content nav > ul > li > span.large {
+  font-family: var(--font-mono);
+  font-size: var(--t-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.sidebar-content a {
+  color: var(--text-dim);
+  border-left: 1px solid transparent;
+}
+
+.sidebar-content a:hover {
+  color: var(--text);
+}
+
+.sidebar-content a[aria-current="page"] {
+  color: var(--text);
+  border-left-color: var(--accent);
+  background: var(--surface);
+}
+
+/* -----------------------------------------------------------
+   12. Table of contents (right sidebar)
+   ----------------------------------------------------------- */
+.right-sidebar,
+.right-sidebar-container,
+starlight-toc {
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+}
+
+.right-sidebar a,
+starlight-toc a {
+  color: var(--text-dim);
+}
+
+.right-sidebar a:hover,
+starlight-toc a:hover {
+  color: var(--text);
+}
+
+.right-sidebar a[aria-current="true"],
+starlight-toc a[aria-current="true"] {
+  color: var(--text);
+  border-left-color: var(--accent);
+}
