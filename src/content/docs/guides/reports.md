@@ -4,9 +4,12 @@ description: Generate and customize interactive HTML reports showing metric tren
 sidebar:
   order: 4
 unentropy_docs:
-  generated: 2025-12-08T14:32:00Z
+  generated: 2026-05-25T00:00:00Z
   sources:
     - specs/006-metrics-report/spec.md
+    - changes/archive/2026-05-25-themed-reports/specs/report-theming/spec.md
+    - changes/archive/2026-05-25-configurable-report-layout/specs/report-sections/spec.md
+    - changes/archive/2026-05-25-configurable-report-layout/specs/multi-metric-charts/spec.md
   scope: all
 ---
 
@@ -55,11 +58,13 @@ Each report contains:
 
 ### Metric Cards
 
-Each metric gets its own card with:
+By default, each metric gets its own card with:
 
 - **Chart**: Interactive visualization of trends
 - **Statistics**: Latest, Min, Max, and Trend
 - **Description**: Metric purpose (if configured)
+
+You can optionally organize cards into named sections and combine related metrics on a single chart. See [Customizing Report Layout](#customizing-report-layout) below.
 
 ### Controls
 
@@ -190,7 +195,67 @@ No data in selected range
 Try selecting a different time period
 ```
 
-## Report Styling
+## Report Theming
+
+Control the visual appearance of your reports with built-in color palettes and light/dark mode settings.
+
+### Built-in Themes
+
+Unentropy ships with four built-in themes, each with dark and light variants:
+
+| Theme      | Accent Color | Character                |
+| ---------- | ------------ | ------------------------ |
+| `lattice`  | Cool blue    | Default, clean and calm  |
+| `flux`     | Warm amber   | Energetic and warm       |
+| `halftone` | Purple       | Distinctive and modern   |
+| `specimen` | Green        | Fresh and natural        |
+
+Set a theme in your configuration:
+
+```json
+{
+  "report": {
+    "theme": "flux"
+  }
+}
+```
+
+### Custom Palettes
+
+Override individual colors to match your brand:
+
+```json
+{
+  "report": {
+    "theme": {
+      "dark": { "--accent": "#ff00ff" },
+      "light": { "--accent": "#aa00aa" }
+    }
+  }
+}
+```
+
+Each palette defines 12 CSS variables (backgrounds, surfaces, borders, text, accent, trend colors). You can override any subset; omitted variables fall back to Lattice defaults. Values must be 7-character hex colors.
+
+### Light and Dark Mode
+
+Control how the report selects between palette variants:
+
+```json
+{
+  "report": {
+    "mode": "auto"
+  }
+}
+```
+
+| Mode     | Behavior                                                         |
+| -------- | ---------------------------------------------------------------- |
+| `auto`   | Respects system `prefers-color-scheme` (default)                 |
+| `dark`   | Always uses the dark variant                                     |
+| `light`  | Always uses the light variant                                    |
+
+Locking to a specific mode is useful when sharing screenshots or hosting reports where you want a consistent appearance regardless of the viewer's system settings.
 
 ### Responsive Design
 
@@ -200,10 +265,6 @@ Reports adapt to different screen sizes:
 - **Tablet** (640px+): Two columns
 - **Desktop** (1024px+): Three columns
 
-### Dark Mode
-
-Reports automatically use dark mode if your system preference is set to dark. No configuration needed.
-
 ### Print Support
 
 Reports are print-friendly:
@@ -211,6 +272,80 @@ Reports are print-friendly:
 1. Open report in browser
 2. Print or save as PDF
 3. Charts and statistics render correctly
+
+## Customizing Report Layout
+
+As your project grows, a flat grid of all metrics can become hard to navigate. You can organize reports into named sections and plot related metrics together on a single chart.
+
+### Sections
+
+Group related metrics under section headers:
+
+```json
+{
+  "report": {
+    "sections": [
+      {
+        "name": "Code Size",
+        "description": "Source code and build artifact metrics",
+        "charts": [
+          { "metrics": "typescript-loc" },
+          { "metrics": "javascript-loc" },
+          { "metrics": "bundle" }
+        ]
+      },
+      {
+        "name": "Quality",
+        "charts": [
+          { "metrics": "coverage" },
+          { "metrics": "test-count" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Each section displays its name as a header with an optional description. Charts appear in the order defined. Metrics not referenced in any section are omitted from the report (they may still be used for quality gates).
+
+### Multi-Metric Charts
+
+Plot multiple related metrics on a single chart to compare them directly:
+
+```json
+{
+  "report": {
+    "sections": [
+      {
+        "name": "Refactoring Progress",
+        "charts": [
+          {
+            "metrics": ["modern-classes", "legacy-classes"],
+            "title": "Modern vs Legacy Class Count"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+This renders one chart card containing both metrics as separate lines with distinct colors and a legend. Metrics with incompatible units or vastly different scales automatically receive dual Y-axes so both series remain clearly visible.
+
+### Custom Chart Titles
+
+Override the default title derived from metric names:
+
+```json
+{
+  "metrics": "bundle-size",
+  "title": "Production Bundle Size"
+}
+```
+
+### Backward Compatibility
+
+Omitting the `report` block entirely preserves the original flat layout: every metric gets its own single-metric chart displayed in definition order.
 
 ## Publishing to GitHub Pages
 
@@ -345,7 +480,11 @@ Reports meet WCAG 2.1 AA standards:
 
 **Problem**: Report doesn't use dark mode
 
-**Solution**: Dark mode follows system preference. Check your OS dark mode setting. Some browsers may need to be restarted after changing system preferences.
+**Solutions**:
+
+- Check `report.mode` in your configuration. If set to `"light"`, the report will always use the light palette regardless of system settings. Change to `"auto"` or `"dark"` to enable dark mode.
+- If `report.mode` is `"auto"` or not set, dark mode follows your OS preference. Check your system dark mode setting.
+- Some browsers need to be restarted after changing system preferences.
 
 ## Related Resources
 

@@ -4,9 +4,11 @@ description: Complete reference for unentropy.json configuration file
 sidebar:
   order: 2
 unentropy_docs:
-  generated: 2025-12-08T14:32:00Z
+  generated: 2026-05-25T00:00:00Z
   sources:
     - specs/001-metrics-tracking-poc/contracts/config-schema.md
+    - changes/archive/2026-05-25-configurable-report-layout/contracts/config-schema.md
+    - changes/archive/2026-05-25-themed-reports/contracts/config-schema.md
   scope: all
 ---
 
@@ -437,6 +439,153 @@ Maximum allowed percentage increase (e.g., `5` = 5% max increase).
 
 See [Quality Gates Guide](../guides/quality-gates.md) for examples.
 
+## Report
+
+Configure the appearance and layout of generated HTML reports.
+
+### Report Theming
+
+Control the visual appearance of your reports with built-in themes or custom palettes.
+
+#### `report.theme`
+
+**Type**: `string | object`  
+**Default**: `"lattice"`
+
+Select a built-in palette or provide custom color overrides.
+
+**Built-in palettes:**
+
+| Value        | Description                       |
+| ------------ | --------------------------------- |
+| `"lattice"`  | Cool blue accent (default)        |
+| `"flux"`     | Warm amber accent                 |
+| `"halftone"` | Purple accent                     |
+| `"specimen"` | Green accent                      |
+
+**Custom palette** (object with `dark` and/or `light` keys):
+
+```json
+{
+  "report": {
+    "theme": {
+      "dark": { "--accent": "#ff00ff" },
+      "light": { "--accent": "#aa00aa" }
+    }
+  }
+}
+```
+
+Available CSS variables for custom palettes:
+
+| Variable           | Used for                  |
+| ------------------ | ------------------------- |
+| `--bg`             | Page background           |
+| `--surface`        | Card backgrounds          |
+| `--surface-card`   | Elevated card surfaces    |
+| `--border`         | Default borders           |
+| `--border-soft`    | Subtle dividers           |
+| `--text`           | Primary text              |
+| `--text-dim`       | Secondary text            |
+| `--text-muted`     | Placeholder/disabled text |
+| `--accent`         | Highlights and links      |
+| `--up`             | Positive trend indicators |
+| `--down`           | Negative trend indicators |
+| `--warn`           | Warning states            |
+
+Each value must be a 7-character hex color (e.g., `#1c2230`). Omitted variables fall back to Lattice defaults.
+
+#### `report.mode`
+
+**Type**: `"auto" | "light" | "dark"`  
+**Default**: `"auto"`
+
+Control how the report selects between light and dark palettes.
+
+| Value     | Behavior                                                      |
+| --------- | ------------------------------------------------------------- |
+| `"auto"`  | Emits both palettes; `prefers-color-scheme` selects at runtime |
+| `"light"` | Locks to light palette; emits only light CSS variables        |
+| `"dark"`  | Locks to dark palette; emits only dark CSS variables          |
+
+```json
+{
+  "report": {
+    "theme": "flux",
+    "mode": "dark"
+  }
+}
+```
+
+### Report Layout
+
+Organize metrics into named sections and combine related metrics on a single chart.
+
+#### `report.sections`
+
+**Type**: `SectionConfig[]`  
+**Required**: No
+
+Define named, visually separated groups of charts. When absent, the report uses a flat layout with all metrics displayed in definition order.
+
+Each section contains:
+
+```json
+{
+  "report": {
+    "sections": [
+      {
+        "name": "Code Size",
+        "description": "Source code metrics by language",
+        "charts": [
+          { "metrics": "typescript-loc" },
+          { "metrics": "javascript-loc" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+#### Section Fields
+
+| Field         | Type           | Required | Description                                    |
+| ------------- | -------------- | -------- | ---------------------------------------------- |
+| `name`        | string         | Yes      | Section header text (max 256 characters)       |
+| `description` | string         | No       | Subtitle shown below the header                |
+| `charts`      | `ChartConfig[]`| Yes      | Charts to render, in display order             |
+
+#### Chart Configuration
+
+| Field     | Type                 | Required | Description                                                              |
+| --------- | -------------------- | -------- | ------------------------------------------------------------------------ |
+| `metrics` | `string \| string[]` | Yes      | Metric ID(s) to plot. Array plots multiple metrics on one chart.         |
+| `title`   | string               | No       | Custom chart title. Defaults to metric name(s) when omitted.               |
+
+**Single-metric chart:**
+
+```json
+{ "metrics": "bundle-size", "title": "Production Bundle Size" }
+```
+
+**Multi-metric chart:**
+
+```json
+{ "metrics": ["modern-classes", "legacy-classes"], "title": "Modern vs Legacy" }
+```
+
+Metrics with different units or scales automatically receive dual Y-axes. A legend identifies each series and can be clicked to toggle visibility.
+
+### Report Validation
+
+- Unknown `theme` string → warning logged, falls back to `"lattice"`
+- Custom theme with partial variables → missing variables filled from Lattice defaults
+- Invalid `mode` value → validation error at config load time
+- Invalid hex format in custom theme → validation error at config load time
+- Empty `sections` array → validation error (remove the block or define at least one section)
+- Unknown `metrics` references in charts → silently omitted from the report
+- Metrics not referenced in any chart → omitted from the report with no warning
+
 ## Complete Example
 
 ```json
@@ -492,6 +641,27 @@ See [Quality Gates Guide](../guides/quality-gates.md) for examples.
         "mode": "no-regression"
       }
     ]
+  },
+  "report": {
+    "theme": "specimen",
+    "mode": "auto",
+    "sections": [
+      {
+        "name": "Code Size",
+        "description": "Source code and build artifact metrics",
+        "charts": [
+          { "metrics": ["src-loc", "test-loc"], "title": "Lines of Code" },
+          { "metrics": "bundle", "title": "Production Bundle Size" }
+        ]
+      },
+      {
+        "name": "Quality",
+        "charts": [
+          { "metrics": "coverage" },
+          { "metrics": "api-endpoints" }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -534,6 +704,34 @@ Provide a shell command that outputs the metric value
 Error in metric "test-coverage": missing required fields
 Required: type, command
 Found: type
+```
+
+### Empty Report Sections
+
+```
+Error: report.sections cannot be empty
+Remove the report block or define at least one section
+```
+
+### Empty Section Charts
+
+```
+Error: Section "Code Size" has no charts
+Each section must contain at least one chart
+```
+
+### Invalid Report Mode
+
+```
+Error: mode must be one of: auto, light, dark
+Found: "system"
+```
+
+### Invalid Theme Value
+
+```
+Error: theme values must be 7-character hex (e.g. #1c2230)
+Found: "#ff00f" at report.theme.dark.--accent
 ```
 
 ## Related Resources
