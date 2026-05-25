@@ -13,6 +13,11 @@ unentropy_docs:
   scope: all
 ---
 
+import latticePreview from "../../../assets/theme-previews/lattice-diagonal.svg";
+import fluxPreview from "../../../assets/theme-previews/flux-diagonal.svg";
+import halftonePreview from "../../../assets/theme-previews/halftone-diagonal.svg";
+import specimenPreview from "../../../assets/theme-previews/specimen-diagonal.svg";
+
 Unentropy generates interactive HTML reports showing how your metrics evolve over time. Reports include charts, statistics, and tools for exploring your data.
 
 ## Generating Reports
@@ -203,12 +208,32 @@ Control the visual appearance of your reports with built-in color palettes and l
 
 Unentropy ships with four built-in themes, each with dark and light variants:
 
-| Theme      | Accent Color | Character                |
-| ---------- | ------------ | ------------------------ |
-| `lattice`  | Cool blue    | Default, clean and calm  |
-| `flux`     | Warm amber   | Energetic and warm       |
-| `halftone` | Purple       | Distinctive and modern   |
-| `specimen` | Green        | Fresh and natural        |
+<div class="theme-gallery not-content">
+  <div class="theme-gallery__card">
+    <div class="theme-gallery__preview">
+      <img src={latticePreview.src} alt="Lattice theme preview" width={latticePreview.width} height={latticePreview.height} loading="lazy" />
+    </div>
+    <div class="theme-gallery__name">lattice <span class="theme-gallery__hint">(default)</span></div>
+  </div>
+  <div class="theme-gallery__card">
+    <div class="theme-gallery__preview">
+      <img src={fluxPreview.src} alt="Flux theme preview" width={fluxPreview.width} height={fluxPreview.height} loading="lazy" />
+    </div>
+    <div class="theme-gallery__name">flux</div>
+  </div>
+  <div class="theme-gallery__card">
+    <div class="theme-gallery__preview">
+      <img src={halftonePreview.src} alt="Halftone theme preview" width={halftonePreview.width} height={halftonePreview.height} loading="lazy" />
+    </div>
+    <div class="theme-gallery__name">halftone</div>
+  </div>
+  <div class="theme-gallery__card">
+    <div class="theme-gallery__preview">
+      <img src={specimenPreview.src} alt="Specimen theme preview" width={specimenPreview.width} height={specimenPreview.height} loading="lazy" />
+    </div>
+    <div class="theme-gallery__name">specimen</div>
+  </div>
+</div>
 
 Set a theme in your configuration:
 
@@ -459,11 +484,11 @@ Reports meet WCAG 2.1 AA standards:
 
 **Possible reasons**:
 
-- You have 10+ builds (toggle only shows for <10 builds)
+- You have 10+ builds (toggle only shows for &lt;10 builds)
 - Report was generated with older version
 - JavaScript error prevented toggle from rendering
 
-**Solution**: Check build count in report header. If <10, check browser console for errors.
+**Solution**: Check build count in report header. If &lt;10, check browser console for errors.
 
 ### Exported Charts Are Blank
 

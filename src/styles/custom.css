@@ -8,3 +8,66 @@
 [data-theme="dark"] .site-title img {
   filter: brightness(0) invert(1);
 }
+
+/* Theme gallery (reports docs) — specimen-card layout */
+.theme-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 1.75rem;
+}
+
+.theme-gallery__card {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 0.625rem;
+  padding: 0.625rem;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  background: var(--sl-color-black);
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.theme-gallery__card:hover {
+  border-color: var(--sl-color-gray-4);
+}
+
+.theme-gallery__preview {
+  position: relative;
+  display: block;
+  line-height: 0;
+  border-radius: 0.3125rem;
+  overflow: hidden;
+  aspect-ratio: 280 / 180;
+  background: var(--sl-color-gray-6);
+}
+
+.theme-gallery__preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.theme-gallery__name {
+  font-family: var(--sl-font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--sl-color-white);
+  margin: 0;
+  padding: 0 0.125rem;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.theme-gallery__hint {
+  font-weight: 400;
+  color: var(--sl-color-gray-3);
+}
+
+@media (max-width: 36rem) {
+  .theme-gallery {
+    grid-template-columns: 1fr;
+  }
+}
