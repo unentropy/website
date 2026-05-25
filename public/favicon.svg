@@ -1,37 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect x="0.0" y="8.5" width="2.5" height="2.5"/>
-  <rect x="2.5" y="8.5" width="2.5" height="2.5"/>
-  <rect x="7.5" y="8.5" width="2.5" height="2.5"/>
-  <rect x="10.0" y="8.5" width="2.5" height="2.5"/>
-  <rect x="15.0" y="8.5" width="2.5" height="2.5"/>
-  <rect x="17.5" y="8.5" width="2.5" height="2.5"/>
-  <rect x="25.0" y="8.5" width="2.5" height="2.5"/>
-  <rect x="27.5" y="8.5" width="2.5" height="2.5"/>
-  <rect x="0.0" y="11" width="2.5" height="5"/>
-  <rect x="2.5" y="11" width="2.5" height="5"/>
-  <rect x="7.5" y="11" width="2.5" height="5"/>
-  <rect x="10.0" y="11" width="2.5" height="5"/>
-  <rect x="15.0" y="11" width="2.5" height="5"/>
-  <rect x="17.5" y="11" width="2.5" height="5"/>
-  <rect x="20.0" y="11" width="2.5" height="5"/>
-  <rect x="22.5" y="13.5" width="2.5" height="2.5"/>
-  <rect x="25.0" y="11" width="2.5" height="5"/>
-  <rect x="27.5" y="11" width="2.5" height="5"/>
-  <rect x="0.0" y="16" width="2.5" height="2.5"/>
-  <rect x="2.5" y="16" width="2.5" height="5"/>
-  <rect x="5.0" y="16" width="2.5" height="5"/>
-  <rect x="7.5" y="16" width="2.5" height="5"/>
-  <rect x="10.0" y="16" width="2.5" height="2.5"/>
-  <rect x="15.0" y="16" width="2.5" height="5"/>
-  <rect x="17.5" y="16" width="2.5" height="5"/>
-  <rect x="22.5" y="16" width="2.5" height="2.5"/>
-  <rect x="25.0" y="16" width="2.5" height="5"/>
-  <rect x="27.5" y="16" width="2.5" height="5"/>
-  
   <style>
     rect { fill: #000; }
     @media (prefers-color-scheme: dark) {
       rect { fill: #fff; }
     }
   </style>
+  <g>
+    <rect x="0" y="10.2857" width="4.57143" height="11.4286"/>
+    <rect x="9.14286" y="10.2857" width="4.57143" height="11.4286"/>
+    <rect x="17.1429" y="10.2857" width="13.7143" height="2.28571"/>
+    <rect x="17.1429" y="12.5714" width="4.57143" height="9.14286"/>
+    <rect x="26.2857" y="12.5714" width="4.57143" height="9.14286"/>
+    <rect x="4.57143" y="19.4286" width="4.57143" height="2.28571"/>
+  </g>
+  <g opacity="0.35">
+    <rect x="4.57143" y="10.2857" width="1.14286" height="9.14286"/>
+    <rect x="13.7143" y="10.2857" width="1.14286" height="11.4286"/>
+    <rect x="30.8571" y="10.2857" width="1.14286" height="11.4286"/>
+    <rect x="21.7143" y="12.5714" width="1.14286" height="9.14286"/>
+  </g>
 </svg>
