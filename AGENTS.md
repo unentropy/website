@@ -7,14 +7,14 @@ A documentation website built with Astro and Starlight. Static site generation (
 ## Tech Stack
 
 - **Runtime:** Bun (not npm/node)
-- **Framework:** Astro 5.6+ with Starlight theme
+- **Framework:** Astro 7 with Starlight theme
 - **Language:** TypeScript (strict mode)
 
 ## Quick Commands
 
 ```bash
 bun dev        # Dev server at localhost:4321
-bun build      # Build to ./dist/
+bun run build  # Build to ./dist/
 bun preview    # Preview production build
 bun astro check # Type check
 ```
@@ -40,7 +40,7 @@ src/
 
 ## Verification
 
-Always run `bun build` before considering work complete. Build errors are the primary feedback mechanism - no test framework is configured.
+Always run `bun run build` before considering work complete. Build errors are the primary feedback mechanism - no test framework is configured.
 
 <!-- OPENSPEC:START -->
 # OpenSpec Instructions

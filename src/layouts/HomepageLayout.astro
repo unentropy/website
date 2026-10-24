@@ -1,16 +1,16 @@
 ---
-import { attachRouteDataAndRunMiddleware } from '../../node_modules/@astrojs/starlight/utils/routing/middleware';
+import { attachRouteDataAndRunMiddleware } from '../../node_modules/@astrojs/starlight/dist/utils/routing/middleware';
 import {
 	generateStarlightPageRouteData,
 	type StarlightPageProps as Props,
-} from '../../node_modules/@astrojs/starlight/utils/starlight-page';
+} from '../../node_modules/@astrojs/starlight/dist/utils/starlight-page';
 
 import 'virtual:starlight/user-css';
-import '../../node_modules/@astrojs/starlight/style/layers.css';
-import '../../node_modules/@astrojs/starlight/style/props.css';
-import '../../node_modules/@astrojs/starlight/style/reset.css';
-import '../../node_modules/@astrojs/starlight/style/asides.css';
-import '../../node_modules/@astrojs/starlight/style/util.css';
+import '../../node_modules/@astrojs/starlight/dist/style/layers.css';
+import '../../node_modules/@astrojs/starlight/dist/style/props.css';
+import '../../node_modules/@astrojs/starlight/dist/style/reset.css';
+import '../../node_modules/@astrojs/starlight/dist/style/asides.css';
+import '../../node_modules/@astrojs/starlight/dist/style/util.css';
 import 'virtual:starlight/optional-css';
 
 import ContentPanel from 'virtual:starlight/components/ContentPanel';
@@ -25,7 +25,7 @@ import logoIcon from '../assets/logo-icon.svg';
 
 const currentYear = new Date().getFullYear();
 
-import printHref from '../../node_modules/@astrojs/starlight/style/print.css?url&no-inline';
+import printHref from '../../node_modules/@astrojs/starlight/dist/style/print.css?url&no-inline';
 
 await attachRouteDataAndRunMiddleware(
 	Astro,
