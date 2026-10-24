@@ -5,6 +5,8 @@ import starlightThemeNova from "starlight-theme-nova";
 
 // https://astro.build/config
 export default defineConfig({
+  // Astro 7 defaults to "jsx", which strips whitespace between inline elements
+  compressHTML: true,
   integrations: [
     starlight({
       title: "Unentropy",
